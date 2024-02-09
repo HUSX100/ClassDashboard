@@ -17,12 +17,22 @@
 #include <tchar.h>
 using namespace std;
 
-const int t_year = 2024;
-const int t_month = 6;
-const int t_day = 15;
+int t_year;
+int t_month;
+int t_day;
 
 
 
+void fx_load_G_cfg()
+{
+    FILE* g_cfg;
+    g_cfg = freopen("C:\\Class_Dashboard\\g_config.ini", "r", stdin);
+    fseek(g_cfg, 0, SEEK_SET);
+    scanf("[Target_Year] = %d", &t_year);
+    scanf("[Target_Month] = %d", &t_month);
+    scanf("[Target_day] = %d", &t_day);
+    if (g_cfg != 0)fclose(g_cfg);
+}
 
 string fx_gettime() //获取当前日期
 {
@@ -59,28 +69,11 @@ int fx_run() //运行壁纸
     ZeroMemory(&pi, sizeof(pi));
 
     // 替换为你要执行的命令
-    TCHAR cmd[] = TEXT("\"C:\\Program Files\\Rainmeter\\Rainmeter.exe\"");
+    TCHAR cmd[] = TEXT("\"C:\\Class_Dashboard\\Rainmeter\\Rainmeter.exe\"");
 
 
     // 创建子进程
-    if (!CreateProcess(NULL,   // 无模块名，使用命令行
-        cmd,        // 命令行
-        NULL,       // 进程安全属性
-        NULL,       // 线程安全属性
-        FALSE,      // 设置句柄继承选项
-        0,          // 无创建标志
-        NULL,       // 使用父进程的环境块
-        NULL,       // 使用父进程的驱动器和目录
-        &si,        // 指向STARTUPINFO或STARTUPINFOEX的指针
-        &pi)        // 指向PROCESS_INFORMATION的指针
-        )
-    {
-        printf("CreateProcess failed (%d).\n", GetLastError());
-        return 1;
-    }
-
-    // 在这里，你可以立即调用exit(0)来结束你的C++程序
-    exit(0);
+    CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
 
     // 关闭进程和线程句柄
     CloseHandle(pi.hProcess);
@@ -98,16 +91,17 @@ string fx_getday() //获取星期
     return day_str;
 }
 
-void fx_writefile(const string date, const string diffday, const int index_student,const string student, const string lesson[]) //写文件
+void fx_writefile(const string date, const int student_s, string wallpaper, string diffdays, string student, string lesson[]) //写文件
 {
     FILE* nday = freopen("C:\\Class_Dashboard\\n_config.ini", "w",stdout);
-    cout << date << endl;
-    cout << diffday << endl;
-    cout << index_student << endl;
-    cout << student << endl;
+    printf("[LastDay] = %s\n", date);
+    printf("[Dute_Num] = %d\n", student_s);
+    printf("[Wallpaper] = %s\n", wallpaper);
+    printf("%s\n", diffdays);
+    printf("%s\n", student);
     for (int i = 0; i <= 8; i++)
     {
-        cout << lesson[i] << endl;
+        printf("%s\n", lesson[i]);
     }
     fclose(nday);
 }
@@ -138,6 +132,51 @@ string fx_get_diffdays()
     return diffdays_str;
 }
 
+void fx_changeBG(string day)
+{
+    if (day == "54")
+    {
+        HKEY hKey;
+        LPCTSTR lpSubKey = TEXT("Control Panel\\Desktop");
+        LPCTSTR lpValueName = TEXT("WallPaper");
+        DWORD dwType = REG_SZ;
+        LPCTSTR lpData = TEXT("C:\\ClassDashboard\\Wallpaper\\54.png");
+        DWORD dwSize = (lstrlen(lpData) + 1) * sizeof(TCHAR);
+        RegOpenKeyEx(HKEY_CURRENT_USER, lpSubKey, NULL, KEY_WRITE, &hKey);
+        RegSetValueEx(hKey, lpValueName, 0, dwType, (LPBYTE)lpData, dwSize);
+        RegCloseKey(hKey);
+    }
+    if (day == "441")
+    {
+        HKEY hKey;
+        LPCTSTR lpSubKey = TEXT("Control Panel\\Desktop");
+        LPCTSTR lpValueName = TEXT("WallPaper");
+        DWORD dwType = REG_SZ;
+        LPCTSTR lpData = TEXT("C:\\ClassDashboard\\Wallpaper\\441.png");
+        DWORD dwSize = (lstrlen(lpData) + 1) * sizeof(TCHAR);
+        RegOpenKeyEx(HKEY_CURRENT_USER, lpSubKey, NULL, KEY_WRITE, &hKey);
+        RegSetValueEx(hKey, lpValueName, 0, dwType, (LPBYTE)lpData, dwSize);
+        RegCloseKey(hKey);
+    }
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    ZeroMemory(&pi, sizeof(pi));
+
+    // 替换为你要执行的命令
+    TCHAR cmd[] = TEXT("\"RunDll32.exe USER32.DLL,UpdatePerUserSystemParameters\"");
+
+
+    // 创建子进程
+    CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+
+    // 关闭进程和线程句柄
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+}
+
 int main()
 {
     string tmp;
@@ -145,25 +184,30 @@ int main()
     string main_lessoname = "C:\\Class_Dashboard\\Week\\";
     string main_date;
     string main_diffday;
+    string main_wallpaper_type;
     int main_dute_s = 0;
     string main_dute[55];
     string main_cnlessons[9];
     FILE *main_n_cfg;
+    fx_load_G_cfg();
     main_n_cfg = freopen("C:\\Class_Dashboard\\n_config.ini", "r" ,stdin);
-    cin >> main_date;
-    cin >> main_diffday;
-    cin >> main_dute_s;
-    cin >> tmp;
+    fseek(main_n_cfg, 0, SEEK_SET);
+    scanf("[Lastday] = %s", &main_date);
+    scanf("[Date_Num] = %d", &main_dute_s);
+    scanf("[Wallpaper] = %s", &main_wallpaper_type);
+    scanf("%d", &main_diffday);
+    scanf("%s", &tmp);
     for (int i = 0; i <= 8; i++)
     {
-        cin >> main_cnlessons[i];
+        scanf("%s", &main_cnlessons[i]);
     }
-    fclose(main_n_cfg);
-    cin.clear();
+    if (main_n_cfg != 0) fclose(main_n_cfg);
+    else return -1;
 
     if (fx_change(main_date))
     {
         fx_run();
+        fx_changeBG(main_wallpaper_type);
     }
     else
     {
@@ -171,27 +215,29 @@ int main()
         main_lessoname += main_day;
         main_lessoname += ".ini";
         FILE *main_weeklesson = freopen(main_lessoname.c_str(), "r",stdin);
-        string main_lesson_tmp;
+        fseek(main_weeklesson, 0, SEEK_SET);
         for (int i = 0; i <= 8; i++)
         {
-            cin >> main_lesson_tmp;
-            main_cnlessons[i] = main_lesson_tmp;
+            scanf("%s", &main_cnlessons[i]);
         }
-        fclose(main_weeklesson);
-        cin.clear();
+        if (main_weeklesson != 0) fclose(main_weeklesson);
+        else return -1;
+
         main_date = fx_gettime();
         main_diffday = fx_get_diffdays();
         main_dute_s += 1;
         if (main_dute_s == 55) main_dute_s = 1;
         FILE *main_student = freopen("C:\\Class_Dashboard\\students.ini", "r",stdin);
+        fseek(main_student, 0, SEEK_SET);
         for (int i = 1; i <= 54; i++)
         {
-            cin >> main_dute[i];
+            scanf("%s", main_dute[i]);
         }
-        fclose(main_student);
-        cin.clear();
-        fx_writefile(main_date, main_diffday, main_dute_s,main_dute[main_dute_s], main_cnlessons);
+        if (main_student != 0) fclose(main_student);
+        else return -1;
+        fx_writefile(main_date, main_dute_s, main_wallpaper_type, main_diffday, main_dute[main_dute_s], main_cnlessons);
         fx_run();
+        fx_changeBG(main_wallpaper_type);
     }
     return 0;
 }
