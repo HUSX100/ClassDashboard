@@ -20,6 +20,7 @@ using namespace std;
 int t_year;
 int t_month;
 int t_day;
+string tmp;
 
 
 
@@ -27,11 +28,12 @@ void fx_load_G_cfg()
 {
     FILE* g_cfg;
     g_cfg = freopen("C:\\Class_Dashboard\\g_config.ini", "r", stdin);
-    fseek(g_cfg, 0, SEEK_SET);
-    scanf("[Target_Year] = %d", &t_year);
-    scanf("[Target_Month] = %d", &t_month);
-    scanf("[Target_day] = %d", &t_day);
+    if (g_cfg != 0) fseek(g_cfg, 0, SEEK_SET);
+    cin >> tmp >> tmp >> t_year;
+    cin >> tmp >> tmp >>t_month;
+    cin >> tmp >> tmp >> t_day;
     if (g_cfg != 0)fclose(g_cfg);
+    cin.clear();
 }
 
 string fx_gettime() //获取当前日期
@@ -94,16 +96,17 @@ string fx_getday() //获取星期
 void fx_writefile(const string date, const int student_s, string wallpaper, string diffdays, string student, string lesson[]) //写文件
 {
     FILE* nday = freopen("C:\\Class_Dashboard\\n_config.ini", "w",stdout);
-    printf("[LastDay] = %s\n", date);
+    printf("[LastDay] = %s\n", date.c_str());
     printf("[Dute_Num] = %d\n", student_s);
-    printf("[Wallpaper] = %s\n", wallpaper);
-    printf("%s\n", diffdays);
-    printf("%s\n", student);
+    printf("[Wallpaper] = %s\n", wallpaper.c_str());
+    printf("%s\n", diffdays.c_str());
+    printf("%s\n", student.c_str());
     for (int i = 0; i <= 8; i++)
     {
-        printf("%s\n", lesson[i]);
+        printf("%s\n", lesson[i].c_str());
     }
-    fclose(nday);
+    if (nday != 0) fclose(nday);
+    cin.clear();
 }
 
 string fx_get_diffdays()
@@ -191,18 +194,20 @@ int main()
     FILE *main_n_cfg;
     fx_load_G_cfg();
     main_n_cfg = freopen("C:\\Class_Dashboard\\n_config.ini", "r" ,stdin);
-    fseek(main_n_cfg, 0, SEEK_SET);
-    scanf("[Lastday] = %s", &main_date);
-    scanf("[Date_Num] = %d", &main_dute_s);
-    scanf("[Wallpaper] = %s", &main_wallpaper_type);
-    scanf("%d", &main_diffday);
-    scanf("%s", &tmp);
+    if (main_n_cfg != 0) fseek(main_n_cfg, 0, SEEK_SET);
+    else return -1;
+    cin >> tmp >> tmp >> main_date;
+    cin >> tmp >> tmp >> main_dute_s;
+    cin >> tmp >> tmp >> main_wallpaper_type;
+    cin >> main_diffday;
+    cin >> tmp;
     for (int i = 0; i <= 8; i++)
     {
-        scanf("%s", &main_cnlessons[i]);
+        cin >> main_cnlessons[i];
     }
     if (main_n_cfg != 0) fclose(main_n_cfg);
     else return -1;
+    cin.clear();
 
     if (fx_change(main_date))
     {
@@ -212,29 +217,35 @@ int main()
     else
     {
         main_day = fx_getday();
+        if (main_day=="6") main_wallpaper_type = "54";
+        else main_wallpaper_type = "441";
         main_lessoname += main_day;
         main_lessoname += ".ini";
         FILE *main_weeklesson = freopen(main_lessoname.c_str(), "r",stdin);
-        fseek(main_weeklesson, 0, SEEK_SET);
+        if (main_weeklesson != 0) fseek(main_weeklesson, 0, SEEK_SET);
+        else return -1;
         for (int i = 0; i <= 8; i++)
         {
-            scanf("%s", &main_cnlessons[i]);
+            cin >> main_cnlessons[i];
         }
         if (main_weeklesson != 0) fclose(main_weeklesson);
         else return -1;
+        cin.clear();
 
         main_date = fx_gettime();
         main_diffday = fx_get_diffdays();
         main_dute_s += 1;
         if (main_dute_s == 55) main_dute_s = 1;
         FILE *main_student = freopen("C:\\Class_Dashboard\\students.ini", "r",stdin);
-        fseek(main_student, 0, SEEK_SET);
+        if (main_student != 0) fseek(main_student, 0, SEEK_SET);
+        else return -1;
         for (int i = 1; i <= 54; i++)
         {
-            scanf("%s", main_dute[i]);
+            cin >> main_dute[i];
         }
         if (main_student != 0) fclose(main_student);
         else return -1;
+        cin.clear();
         fx_writefile(main_date, main_dute_s, main_wallpaper_type, main_diffday, main_dute[main_dute_s], main_cnlessons);
         fx_run();
         fx_changeBG(main_wallpaper_type);
