@@ -143,7 +143,7 @@ void fx_changeBG(string day)
         LPCTSTR lpSubKey = TEXT("Control Panel\\Desktop");
         LPCTSTR lpValueName = TEXT("WallPaper");
         DWORD dwType = REG_SZ;
-        LPCTSTR lpData = TEXT("C:\\ClassDashboard\\Wallpaper\\54.png");
+        LPCTSTR lpData = TEXT("C:\\Class_Dashboard\\Wallpaper\\54.png");
         DWORD dwSize = (lstrlen(lpData) + 1) * sizeof(TCHAR);
         RegOpenKeyEx(HKEY_CURRENT_USER, lpSubKey, NULL, KEY_WRITE, &hKey);
         RegSetValueEx(hKey, lpValueName, 0, dwType, (LPBYTE)lpData, dwSize);
@@ -155,7 +155,7 @@ void fx_changeBG(string day)
         LPCTSTR lpSubKey = TEXT("Control Panel\\Desktop");
         LPCTSTR lpValueName = TEXT("WallPaper");
         DWORD dwType = REG_SZ;
-        LPCTSTR lpData = TEXT("C:\\ClassDashboard\\Wallpaper\\441.png");
+        LPCTSTR lpData = TEXT("C:\\Class_Dashboard\\Wallpaper\\441.png");
         DWORD dwSize = (lstrlen(lpData) + 1) * sizeof(TCHAR);
         RegOpenKeyEx(HKEY_CURRENT_USER, lpSubKey, NULL, KEY_WRITE, &hKey);
         RegSetValueEx(hKey, lpValueName, 0, dwType, (LPBYTE)lpData, dwSize);
