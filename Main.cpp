@@ -61,7 +61,7 @@ bool fx_change(const string t_tag) //判断是否更改
     }
 }
 
-int fx_run() //运行壁纸
+void fx_run() //运行壁纸
 {
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
