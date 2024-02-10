@@ -15,12 +15,14 @@
 #include <cstdlib>
 #include <thread>
 #include <tchar.h>
+#include <shlobj.h>
 using namespace std;
 
 int t_year;
 int t_month;
 int t_day;
 string tmp;
+string user_dir;
 
 
 
@@ -139,48 +141,56 @@ void fx_changeBG(string day)
 {
     if (day == "54")
     {
-        HKEY hKey;
-        LPCTSTR lpSubKey = TEXT("Control Panel\\Desktop");
-        LPCTSTR lpValueName = TEXT("WallPaper");
-        DWORD dwType = REG_SZ;
-        LPCTSTR lpData = TEXT("C:\\Class_Dashboard\\Wallpaper\\54.png");
-        DWORD dwSize = (lstrlen(lpData) + 1) * sizeof(TCHAR);
-        RegOpenKeyEx(HKEY_CURRENT_USER, lpSubKey, NULL, KEY_WRITE, &hKey);
-        RegSetValueEx(hKey, lpValueName, 0, dwType, (LPBYTE)lpData, dwSize);
-        RegCloseKey(hKey);
+        SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, (PVOID)"C:\\Class_Dashboard\\Wallpaper\\54.png", SPIF_UPDATEINIFILE);
     }
     if (day == "441")
     {
-        HKEY hKey;
-        LPCTSTR lpSubKey = TEXT("Control Panel\\Desktop");
-        LPCTSTR lpValueName = TEXT("WallPaper");
-        DWORD dwType = REG_SZ;
-        LPCTSTR lpData = TEXT("C:\\Class_Dashboard\\Wallpaper\\441.png");
-        DWORD dwSize = (lstrlen(lpData) + 1) * sizeof(TCHAR);
-        RegOpenKeyEx(HKEY_CURRENT_USER, lpSubKey, NULL, KEY_WRITE, &hKey);
-        RegSetValueEx(hKey, lpValueName, 0, dwType, (LPBYTE)lpData, dwSize);
-        RegCloseKey(hKey);
+        SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, (PVOID)"C:\\Class_Dashboard\\Wallpaper\\441.png", SPIF_UPDATEINIFILE);
     }
-    STARTUPINFO si;
-    PROCESS_INFORMATION pi;
 
-    ZeroMemory(&si, sizeof(si));
-    si.cb = sizeof(si);
-    ZeroMemory(&pi, sizeof(pi));
-
-    // 替换为你要执行的命令
-    TCHAR cmd[] = TEXT("\"RunDll32.exe USER32.DLL,UpdatePerUserSystemParameters\"");
-
-
-    // 创建子进程
-    CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
-
-    // 关闭进程和线程句柄
-    CloseHandle(pi.hProcess);
-    CloseHandle(pi.hThread);
 }
 
-int main()
+void fx_get_user_dir()
+{
+    TCHAR path[MAX_PATH];
+    if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, path)))
+    {
+        wstring wstrPath(path);
+        string strPath(wstrPath.begin(), wstrPath.end());
+        user_dir = strPath;
+    }
+}
+
+void fx_copy_rcfg(string type)
+{
+    string DEL_filePath = user_dir + "\\AppData\\Roaming\\Rainmeter\\Rainmeter.ini";
+    remove(DEL_filePath.c_str());
+    string COPY_sourcePath;
+    if (type == "441") COPY_sourcePath = "C:\\Class_Dashboard\\Rainmeter_cfg\\441.ini";
+    if (type == "54") COPY_sourcePath = "C:\\Class_Dashboard\\Rainmeter_cfg\\54.ini";
+    string COPY_destinationPath = user_dir + "\\AppData\\Roaming\\Rainmeter\\Rainmeter.ini";
+    filesystem::copy(COPY_sourcePath, COPY_destinationPath);
+}
+
+void fx_EndProcess(const WCHAR* processName) {
+    HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0);
+    PROCESSENTRY32 pEntry;
+    pEntry.dwSize = sizeof(pEntry);
+    BOOL hRes = Process32First(hSnapShot, &pEntry);
+    while (hRes) {
+        if (wcscmp(pEntry.szExeFile, processName) == 0) {
+            HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, 0, (DWORD)pEntry.th32ProcessID);
+            if (hProcess != NULL) {
+                TerminateProcess(hProcess, 9);
+                CloseHandle(hProcess);
+            }
+        }
+        hRes = Process32Next(hSnapShot, &pEntry);
+    }
+    CloseHandle(hSnapShot);
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     string tmp;
     string main_day;
@@ -191,8 +201,10 @@ int main()
     int main_dute_s = 0;
     string main_dute[55];
     string main_cnlessons[9];
-    FILE *main_n_cfg;
+    fx_EndProcess(L"Rainmeter.exe");
     fx_load_G_cfg();
+    fx_get_user_dir();
+    FILE* main_n_cfg;
     main_n_cfg = freopen("C:\\Class_Dashboard\\n_config.ini", "r" ,stdin);
     if (main_n_cfg != 0) fseek(main_n_cfg, 0, SEEK_SET);
     else return -1;
@@ -211,8 +223,9 @@ int main()
 
     if (fx_change(main_date))
     {
-        fx_run();
         fx_changeBG(main_wallpaper_type);
+        fx_copy_rcfg(main_wallpaper_type);
+        fx_run();
     }
     else
     {
@@ -247,8 +260,9 @@ int main()
         else return -1;
         cin.clear();
         fx_writefile(main_date, main_dute_s, main_wallpaper_type, main_diffday, main_dute[main_dute_s], main_cnlessons);
-        fx_run();
         fx_changeBG(main_wallpaper_type);
+        fx_copy_rcfg(main_wallpaper_type);
+        fx_run();
     }
     return 0;
 }
