@@ -138,13 +138,13 @@
     <ClCompile Include="ChangeMode.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Mode.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Mainlauncher.rc" />
+    <ResourceCompile Include="ModeChanger.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ModeChanger.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
