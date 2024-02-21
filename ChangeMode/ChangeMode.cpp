@@ -124,12 +124,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         break;
     default:
         MessageBox(NULL, L"The instruction is incorrect!", L"Error", MB_OK);
-        break;
+        return -1;
     }
 
     LocalFree(szArgList);
     n_cfg = freopen("C:\\Class_Dashboard\\n_config.ini", "w", stdout);
     if (n_cfg != 0) fseek(n_cfg, 0, SEEK_SET);
+    else
+    {
+        MessageBox(NULL, L"Failed to write n_config!", L"Error", MB_OK);
+        return -1;
+    }
     cout << config[0] << " " << config[1] << " " << config[2] << endl;
     cout << config[3] << " " << config[4] << " " << config[5] << endl;
     cout << config[6] << " " << config[7] << " " << config[8] << endl;

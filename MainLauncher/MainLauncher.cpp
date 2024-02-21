@@ -32,6 +32,11 @@ void fx_load_G_cfg()
     FILE* g_cfg;
     g_cfg = freopen("C:\\Class_Dashboard\\g_config.ini", "r", stdin);
     if (g_cfg != 0) fseek(g_cfg, 0, SEEK_SET);
+    else
+    {
+        MessageBox(NULL, L"Failed to open g_config!", L"Error", MB_OK);
+        exit(0);
+    }
     cin >> tmp >> tmp >> t_year;
     cin >> tmp >> tmp >>t_month;
     cin >> tmp >> tmp >> t_day;
@@ -99,6 +104,11 @@ string fx_getday() //获取星期
 void fx_writefile(const string date, const int student_s, string wallpaper, string diffdays, string student, string lesson[]) //写文件
 {
     FILE* nday = freopen("C:\\Class_Dashboard\\n_config.ini", "w",stdout);
+    if (nday == 0)
+    {
+        MessageBox(NULL, L"Failed to write n_config!", L"Error", MB_OK);
+        exit(0);
+    }
     printf("[LastDay] = %s\n", date.c_str());
     printf("[Dute_Num] = %d\n", student_s);
     printf("[Wallpaper] = %s\n", wallpaper.c_str());
@@ -208,7 +218,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     FILE* main_n_cfg;
     main_n_cfg = freopen("C:\\Class_Dashboard\\n_config.ini", "r" ,stdin);
     if (main_n_cfg != 0) fseek(main_n_cfg, 0, SEEK_SET);
-    else return -1;
+    else
+    {
+        MessageBox(NULL, L"Failed to open n_config!", L"Error", MB_OK);
+        return -1;
+    }
     cin >> tmp >> tmp >> main_date;
     cin >> tmp >> tmp >> main_dute_s;
     cin >> tmp >> tmp >> main_wallpaper_type;
@@ -216,7 +230,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     cin >> tmp;
     for (int i = 0; i <= 8; i++) cin >> main_cnlessons[i];
     if (main_n_cfg != 0) fclose(main_n_cfg);
-    else return -1;
     cin.clear();
 
     if (fx_change(main_date))
@@ -234,7 +247,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         main_lessoname += ".ini";
         FILE *main_weeklesson = freopen(main_lessoname.c_str(), "r",stdin);
         if (main_weeklesson != 0) fseek(main_weeklesson, 0, SEEK_SET);
-        else return -1;
+        else
+        {
+            MessageBox(NULL, L"Failed to open this.week!", L"Error", MB_OK);
+            return -1;
+        }
         for (int i = 0; i <= 8; i++) cin >> main_cnlessons[i];
         if (main_weeklesson != 0) fclose(main_weeklesson);
         else return -1;
@@ -246,7 +263,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         if (main_dute_s == 55) main_dute_s = 1;
         FILE *main_student = freopen("C:\\Class_Dashboard\\students.ini", "r",stdin);
         if (main_student != 0) fseek(main_student, 0, SEEK_SET);
-        else return -1;
+        else
+        {
+            MessageBox(NULL, L"Failed to open students!", L"Error", MB_OK);
+            return -1;
+        }
         for (int i = 1; i <= 54; i++) cin >> main_dute[i];
         if (main_student != 0) fclose(main_student);
         else return -1;
