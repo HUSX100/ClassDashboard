@@ -16,6 +16,7 @@
 #include <thread>
 #include <tchar.h>
 #include <shlobj.h>
+#include "resource.h"
 using namespace std;
 
 int t_year;
@@ -213,10 +214,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     cin >> tmp >> tmp >> main_wallpaper_type;
     cin >> main_diffday;
     cin >> tmp;
-    for (int i = 0; i <= 8; i++)
-    {
-        cin >> main_cnlessons[i];
-    }
+    for (int i = 0; i <= 8; i++) cin >> main_cnlessons[i];
     if (main_n_cfg != 0) fclose(main_n_cfg);
     else return -1;
     cin.clear();
@@ -237,10 +235,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         FILE *main_weeklesson = freopen(main_lessoname.c_str(), "r",stdin);
         if (main_weeklesson != 0) fseek(main_weeklesson, 0, SEEK_SET);
         else return -1;
-        for (int i = 0; i <= 8; i++)
-        {
-            cin >> main_cnlessons[i];
-        }
+        for (int i = 0; i <= 8; i++) cin >> main_cnlessons[i];
         if (main_weeklesson != 0) fclose(main_weeklesson);
         else return -1;
         cin.clear();
@@ -252,10 +247,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         FILE *main_student = freopen("C:\\Class_Dashboard\\students.ini", "r",stdin);
         if (main_student != 0) fseek(main_student, 0, SEEK_SET);
         else return -1;
-        for (int i = 1; i <= 54; i++)
-        {
-            cin >> main_dute[i];
-        }
+        for (int i = 1; i <= 54; i++) cin >> main_dute[i];
         if (main_student != 0) fclose(main_student);
         else return -1;
         cin.clear();
