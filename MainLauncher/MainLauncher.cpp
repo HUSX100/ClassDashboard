@@ -22,6 +22,7 @@ using namespace std;
 int t_year;
 int t_month;
 int t_day;
+int student_num;
 string tmp;
 string user_dir;
 
@@ -40,6 +41,7 @@ void fx_load_G_cfg()
     cin >> tmp >> tmp >> t_year;
     cin >> tmp >> tmp >>t_month;
     cin >> tmp >> tmp >> t_day;
+    cin >> tmp >> tmp >> student_num;
     if (g_cfg != 0)fclose(g_cfg);
     cin.clear();
 }
@@ -260,7 +262,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         main_date = fx_gettime();
         main_diffday = fx_get_diffdays();
         main_dute_s += 1;
-        if (main_dute_s == 55) main_dute_s = 1;
+        if (main_dute_s == student_num + 1) main_dute_s = 1;
         FILE *main_student = freopen("C:\\Class_Dashboard\\students.ini", "r",stdin);
         if (main_student != 0) fseek(main_student, 0, SEEK_SET);
         else
@@ -268,7 +270,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             MessageBox(NULL, L"Failed to open students!", L"Error", MB_OK);
             return -1;
         }
-        for (int i = 1; i <= 54; i++) cin >> main_dute[i];
+        for (int i = 1; i <= student_num; i++) cin >> main_dute[i];
         if (main_student != 0) fclose(main_student);
         else return -1;
         cin.clear();
