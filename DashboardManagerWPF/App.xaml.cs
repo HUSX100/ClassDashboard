@@ -21,17 +21,6 @@ namespace DashboardManagerWPF
 
             notifyIcon = new TaskbarIcon();
 
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = "\"C:\\Class_Dashboard\\MainLauncher.exe\"";
-            startInfo.Verb = "runas";
-            try
-            {
-                Process.Start(startInfo);
-            }
-            catch
-            {
-                MessageBox.Show("Launch failed", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
 
             // 从资源中加载图标
             using (Stream iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/EditK.ico")).Stream)
@@ -78,7 +67,7 @@ namespace DashboardManagerWPF
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
-            MainWindow.Hide();
+            Application.Current.Shutdown(0);
         }
 
         protected override void OnExit(ExitEventArgs e)

@@ -152,13 +152,29 @@ string fx_get_diffdays()
 
 void fx_changeBG(string day)
 {
+#ifdef _UNICODE
+#define SystemParametersInfo  SystemParametersInfoW
+#else
+#define SystemParametersInfo  SystemParametersInfoA
+#endif
+
+    // 然后你可以这样调用函数：
+    
     if (day == "54")
     {
-        SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, (PVOID)"C:\\Class_Dashboard\\Wallpaper\\54.png", SPIF_UPDATEINIFILE);
+        if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (PVOID)_T("C:\\Class_Dashboard\\Wallpaper\\54.png"), SPIF_UPDATEINIFILE))
+        {
+            MessageBox(NULL, L"Failed to set wallpaper!", L"Error", MB_OK);
+            exit(0);
+        }
     }
     if (day == "441")
     {
-        SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, (PVOID)"C:\\Class_Dashboard\\Wallpaper\\441.png", SPIF_UPDATEINIFILE);
+        if (!SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (PVOID)_T("C:\\Class_Dashboard\\Wallpaper\\441.png"), SPIF_UPDATEINIFILE))
+        {
+            MessageBox(NULL, L"Failed to set wallpaper!", L"Error", MB_OK);
+            exit(0);
+        }
     }
 
 }
@@ -185,7 +201,8 @@ void fx_copy_rcfg(string type)
     filesystem::copy(COPY_sourcePath, COPY_destinationPath);
 }
 
-void fx_EndProcess(const WCHAR* processName) {
+/*
+    void fx_EndProcess(const WCHAR* processName) {
     HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0);
     PROCESSENTRY32 pEntry;
     pEntry.dwSize = sizeof(pEntry);
@@ -202,6 +219,34 @@ void fx_EndProcess(const WCHAR* processName) {
     }
     CloseHandle(hSnapShot);
 }
+*/
+
+void fx_EndProcess()
+{
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    si.dwFlags = STARTF_USESHOWWINDOW;
+    si.wShowWindow = SW_HIDE;
+
+    TCHAR cmd[] = _T("cmd.exe /c taskkill /f /im Rainmeter.exe");
+
+    if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+    {
+        MessageBox(NULL, L"Failed to end Rainmeter.exe!", L"Error", MB_OK);
+        exit(0);
+    }
+
+    // Wait until child process exits.
+    WaitForSingleObject(pi.hProcess, INFINITE);
+
+    // Close process and thread handles. 
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+
+}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -214,7 +259,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     int main_dute_s = 0;
     string main_dute[55];
     string main_cnlessons[9];
-    fx_EndProcess(L"Rainmeter.exe");
+    fx_EndProcess();
     fx_load_G_cfg();
     fx_get_user_dir();
     FILE* main_n_cfg;
@@ -223,7 +268,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     else
     {
         MessageBox(NULL, L"Failed to open n_config!", L"Error", MB_OK);
-        return -1;
+        exit(0);
     }
     cin >> tmp >> tmp >> main_date;
     cin >> tmp >> tmp >> main_dute_s;
@@ -252,7 +297,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         else
         {
             MessageBox(NULL, L"Failed to open this.week!", L"Error", MB_OK);
-            return -1;
+            exit(0);
         }
         for (int i = 0; i <= 8; i++) cin >> main_cnlessons[i];
         if (main_weeklesson != 0) fclose(main_weeklesson);
@@ -268,7 +313,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         else
         {
             MessageBox(NULL, L"Failed to open students!", L"Error", MB_OK);
-            return -1;
+            exit(0);
         }
         for (int i = 1; i <= student_num; i++) cin >> main_dute[i];
         if (main_student != 0) fclose(main_student);

@@ -8,11 +8,6 @@ namespace DashboardManagerWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
-
         private void Chinese_Click(object sender, RoutedEventArgs e)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -175,10 +170,6 @@ namespace DashboardManagerWPF
             {
                 MessageBox.Show("Reset failed", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-        private void Close_Click(object sender, RoutedEventArgs e)
-        {
-            this.Hide();
         }
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
